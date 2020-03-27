@@ -8,11 +8,20 @@ import * as passport from 'passport';
 import * as hpp from 'hpp';
 import * as helmet from 'helmet';
 
+import { sequelize } from './models';
+
 dotenv.config();
 const app = express();
 const prod: boolean = process.env.NODE_ENV === 'production';
 
 app.set('port', prod? process.env.PORT : 3065);
+sequelize.sync({ force: false }) // force: true 하면 서버 재시작할 때 테이블이 다시 만들어짐. 
+    .then(() => {
+        console.log('데이터베이스 연결 성공')
+    })
+    .catch((err: Error) => {
+        console.error(err);
+    });
 
 if (prod){
     app.use(hpp());
