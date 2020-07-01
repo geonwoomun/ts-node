@@ -11,7 +11,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@emotion/core": "^10.0.28"
+  },
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "@storybook/addon-actions": "^5.3.19",
@@ -21,6 +23,7 @@
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
     "babel-loader": "^8.1.0",
+    "babel-plugin-named-asset-import": "^0.3.6",
     "babel-preset-react-app": "^9.1.2",
     "react-docgen-typescript-loader": "^3.7.2",
     "typescript": "^3.9.5"
