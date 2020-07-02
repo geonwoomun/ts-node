@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { css, jsx } from '@emotion/core';
 import ButtonGroup from '../ButtonGroup/ButtonGroup';
 import Button from '../Button/Button';
+import { useTransition, animated } from 'react-spring';
 
 export type DialogProps = {
   visible: boolean;
@@ -26,22 +27,77 @@ const Dialog = ({
   cancelText,
   confirmText,
   children,
+  onCancel,
+  onConfirm,
 }: DialogProps) => {
+  const fadeTransition = useTransition(visible, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+  const slideUptransition = useTransition(visible, null, {
+    from: {
+      transform: `translateY(200px) scale(0.8)`,
+      opacity: 0,
+    },
+    enter: {
+      transform: `tarnslateY(0px) sacle(1)`,
+      opacity: 1,
+    },
+    leave: {
+      transform: `translateY(200px) scale(0.8)`,
+      opacity: 0,
+    },
+    config: {
+      tension: 200,
+      friction: 15,
+    },
+  });
+
   return (
     <Fragment>
-      <div css={[fullscreen, darkLayer]}></div>
-      <div css={[fullscreen, whiteBoxWrapper]}>
-        <div css={whiteBox}>
-          <h3>포스트 삭제</h3>
-          <p>포스트를 정말로 삭제하시겠습니까?</p>
-          <ButtonGroup css={{ marginTop: '3rem ' }} rightAlign>
-            <Button theme='tertiary'>취소</Button>
-            <Button>삭제</Button>
-          </ButtonGroup>
-        </div>
-      </div>
+      {fadeTransition.map(({ item, key, props }) =>
+        item ? (
+          <animated.div
+            css={[fullscreen, darkLayer]}
+            key={key}
+            style={props}
+          ></animated.div>
+        ) : null
+      )}
+
+      {slideUptransition.map(({ item, key, props }) =>
+        item ? (
+          <animated.div
+            css={[fullscreen, whiteBoxWrapper]}
+            style={props}
+            key={key}
+          >
+            <div css={whiteBox}>
+              {title && <h3>{title}</h3>}
+              {description && <p>{description}</p>}
+              {children}
+              {!hideButtons && (
+                <ButtonGroup css={{ marginTop: '3rem ' }} rightAlign>
+                  {cancellable && (
+                    <Button theme='tertiary' onClick={onCancel}>
+                      {cancelText}
+                    </Button>
+                  )}
+                  <Button onClick={onConfirm}>{confirmText}</Button>
+                </ButtonGroup>
+              )}
+            </div>
+          </animated.div>
+        ) : null
+      )}
     </Fragment>
   );
+};
+
+Dialog.defaultProps = {
+  cancelText: '취소',
+  confirmText: '확인',
 };
 
 const fullscreen = css`
